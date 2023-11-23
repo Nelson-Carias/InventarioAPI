@@ -1,9 +1,6 @@
-import { Router } from "express"
-import AuthController from "../controllers/auth.controller"
-
+import { Router } from "express";
+import authController from "../controllers/auth.controller";
 const router = Router()
-const product = AuthController
-
-router.post("/", product.loginUser)
-
+const authorize = authController
+router.post('/sign',authorize.Login)
 export default router

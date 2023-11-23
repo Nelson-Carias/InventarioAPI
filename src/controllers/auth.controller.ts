@@ -1,35 +1,36 @@
-// Importa los módulos necesarios
-import { Request, Response } from 'express';
-import { AppDataSource } from './../data-source';  
-import { User } from '../models/User';  
+import { User } from "../models/User";
+import { Request, Response } from "express";
+import { AppDataSource } from "../data-source";
+import bcrypt from "bcrypt";
+import { Token } from "../jwtvalidation/jwt.validation";
 
-class AuthController {
-
-  static loginUser = async (req:Request, res:Response) => {
+class authController {
+  static Login = async (req: Request, res: Response) => {
+    const authrepo = AppDataSource.getRepository(User);
     const { email, password } = req.body;
-    const userRepository = AppDataSource.getRepository(User);
 
     try {
-      const user = await userRepository.findOne({ where: { email } });
-
-      if (!user || user.password !== password) {
-        return res.json({ 
-            ok: false, 
-            StatusCode: 404,
-            message: 'email or password does not exist' });
+      const user = await authrepo.findOne({
+        where: { email, state: true },
+      });
+      if (!user || !bcrypt.compareSync(password, user.password)) {
+        return res.json({
+          ok: false,
+          message: "email or password incorrect",
+        });
       }
-
+      const tokenb = await Token(user);
       return res.json({
         ok: true,
-        msg: 'Login successful',
+        message: "correct",
+        tokenb,
       });
     } catch (error) {
       return res.json({
         ok: false,
-        message: `error = ${error}`,
+        message: `Error ${error}`,
       });
     }
   };
 }
-
-export default AuthController
+export default authController;

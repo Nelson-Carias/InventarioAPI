@@ -42,6 +42,9 @@ class UsersController {
             user.lastName = lastName
             user.email = email
             user.password = password
+            user.hashPassword();
+            const savedUser = await userRepository.save(user);
+            savedUser.password = undefined;
             user.rol = existingRol
 
             await userRepository.save(user)

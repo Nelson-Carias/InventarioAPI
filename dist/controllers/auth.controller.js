@@ -8,36 +8,44 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
-const data_source_1 = require("./../data-source");
 const User_1 = require("../models/User");
-class AuthController {
+const data_source_1 = require("../data-source");
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const jwt_validation_1 = require("../jwtvalidation/jwt.validation");
+class authController {
 }
-_a = AuthController;
-AuthController.loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+_a = authController;
+authController.Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const authrepo = data_source_1.AppDataSource.getRepository(User_1.User);
     const { email, password } = req.body;
-    const userRepository = data_source_1.AppDataSource.getRepository(User_1.User);
     try {
-        const user = yield userRepository.findOne({ where: { email } });
-        if (!user || user.password !== password) {
+        const user = yield authrepo.findOne({
+            where: { email, state: true },
+        });
+        if (!user || !bcrypt_1.default.compareSync(password, user.password)) {
             return res.json({
                 ok: false,
-                StatusCode: 404,
-                message: 'email or password does not exist'
+                message: "email or password incorrect",
             });
         }
+        const tokenb = yield (0, jwt_validation_1.Token)(user);
         return res.json({
             ok: true,
-            msg: 'Login successful',
+            message: "correct",
+            tokenb,
         });
     }
     catch (error) {
         return res.json({
             ok: false,
-            message: `error = ${error}`,
+            message: `Error ${error}`,
         });
     }
 });
-exports.default = AuthController;
+exports.default = authController;
 //# sourceMappingURL=auth.controller.js.map

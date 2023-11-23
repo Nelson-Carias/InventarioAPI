@@ -51,6 +51,9 @@ UsersController.createUser = (req, res) => __awaiter(void 0, void 0, void 0, fun
         user.lastName = lastName;
         user.email = email;
         user.password = password;
+        user.hashPassword();
+        const savedUser = yield userRepository.save(user);
+        savedUser.password = undefined;
         user.rol = existingRol;
         yield userRepository.save(user);
         return res.json({

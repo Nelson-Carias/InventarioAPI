@@ -4,7 +4,7 @@ export const AppDataSource = new DataSource({
 type: "mysql",
 host:"localhost",
 username: "root",
-password: "password",
+password: "passwordsql",
 port: 3306,
 database:"test-inventarioapi",
 synchronize: true,
