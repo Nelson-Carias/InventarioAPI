@@ -65,7 +65,7 @@ class UsersController {
 
         try {
             const users = await userRepository.find({
-                where: { state: true },
+                where: { state: true }, relations :{rol: true},
             });
 
             return users.length > 0
