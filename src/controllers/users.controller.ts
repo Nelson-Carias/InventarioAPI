@@ -32,7 +32,7 @@ class UsersController {
                 if(existingRol?.rol && rolId){
                     return res.json({
                         ok:false,
-                        msg: 'Cannot assing supplier to a regular user'
+                        msg: 'Cannot assing rol to a regular user'
                     })
                 }
             }
@@ -109,7 +109,7 @@ class UsersController {
         const id = parseInt(req.params.id)
         const userRepository = AppDataSource.getRepository(User)
         const roleRepository = AppDataSource.getRepository(Rol)
-        const { name, lastName, email, rolId } = req.body
+        const { name, lastName, email, password, rolId } = req.body
         let user: User
 
         try {
@@ -143,6 +143,9 @@ class UsersController {
             user.name = name
             user.lastName = lastName
             user.email = email
+            user.hashPassword();
+            const savedUser = await userRepository.save(user);
+            savedUser.password = undefined;
             user.rol = existingRol
 
             await userRepository.save(user)

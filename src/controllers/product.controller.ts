@@ -37,11 +37,11 @@ class ProductController {
 
       const product = new Product();
 
-      (product.name = name),
-      (product.description = description),
-      (product.price = price),
-      (product.stock = stock),
-      (product.supplier = existingSupplier);
+      product.name = name,
+      product.description = description,
+      product.price = price,
+      product.stock = stock,
+      product.supplier = existingSupplier;
 
       await productRepository.save(product);
 

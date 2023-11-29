@@ -33,7 +33,7 @@ __decorate([
 ], Product.prototype, "description", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
+    __metadata("design:type", Number)
 ], Product.prototype, "price", void 0);
 __decorate([
     (0, typeorm_1.Column)(),

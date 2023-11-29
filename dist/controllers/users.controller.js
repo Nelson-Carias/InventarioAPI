@@ -42,7 +42,7 @@ UsersController.createUser = (req, res) => __awaiter(void 0, void 0, void 0, fun
             if ((existingRol === null || existingRol === void 0 ? void 0 : existingRol.rol) && rolId) {
                 return res.json({
                     ok: false,
-                    msg: 'Cannot assing supplier to a regular user'
+                    msg: 'Cannot assing rol to a regular user'
                 });
             }
         }
@@ -72,7 +72,7 @@ UsersController.getUsers = (req, res) => __awaiter(void 0, void 0, void 0, funct
     const userRepository = data_source_1.AppDataSource.getRepository(User_1.User);
     try {
         const users = yield userRepository.find({
-            where: { state: true },
+            where: { state: true }, relations: { rol: true },
         });
         return users.length > 0
             ? res.json({
@@ -115,7 +115,7 @@ UsersController.updateUser = (req, res) => __awaiter(void 0, void 0, void 0, fun
     const id = parseInt(req.params.id);
     const userRepository = data_source_1.AppDataSource.getRepository(User_1.User);
     const roleRepository = data_source_1.AppDataSource.getRepository(Rol_1.Rol);
-    const { name, lastName, email, rolId } = req.body;
+    const { name, lastName, email, password, rolId } = req.body;
     let user;
     try {
         user = yield userRepository.findOneOrFail({
@@ -143,6 +143,9 @@ UsersController.updateUser = (req, res) => __awaiter(void 0, void 0, void 0, fun
         user.name = name;
         user.lastName = lastName;
         user.email = email;
+        user.hashPassword();
+        const savedUser = yield userRepository.save(user);
+        savedUser.password = undefined;
         user.rol = existingRol;
         yield userRepository.save(user);
         return res.json({
