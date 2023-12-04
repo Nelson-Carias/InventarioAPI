@@ -5,9 +5,9 @@ const router = Router();
 
 const rol =  RolController
 
-router.post("/",  rol.createRol)
+router.post("/", checkToken,  rol.createRol)
 
-router.get("/",  rol.getRoles)
+router.get("/", checkToken, rol.getRoles)
 
 router.get("/:id", checkToken, rol.byIdRol)
 
