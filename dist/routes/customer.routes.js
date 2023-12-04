@@ -9,8 +9,8 @@ const router = (0, express_1.Router)();
 const product = customer_controller_1.default;
 router.post("/", product.createCustomer);
 router.get("/", product.getCustomers);
-// router.get("/:id", product.byIdCustomer)
-// router.delete("/:id", product.deleteCustomer)
-// router.put("/:id", product.updateCustomer)
+router.get("/:id", product.byIdCustomer);
+router.delete("/:id", product.deleteCustomer);
+router.put("/:id", product.updateCustomer);
 exports.default = router;
 //# sourceMappingURL=customer.routes.js.map

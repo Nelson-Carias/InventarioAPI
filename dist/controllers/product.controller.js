@@ -149,15 +149,24 @@ ProductController.deleteProduct = (req, resp) => __awaiter(void 0, void 0, void 
 // FUNCIONA
 ProductController.updateProduct = (req, resp) => __awaiter(void 0, void 0, void 0, function* () {
     const id = parseInt(req.params.id);
-    const { stock } = req.body;
+    const { name, description, price, stock, supplierId } = req.body;
+    const supplierRepository = data_source_1.AppDataSource.getRepository(Supplier_1.Supplier);
     try {
         const product = yield productRepository.findOne({
             where: { id, state: true },
         });
-        if (!stock) {
-            throw new Error("Not Found");
+        const existingSupplier = yield supplierRepository.findOne({ where: { id: supplierId } });
+        if (!existingSupplier) {
+            return resp.json({
+                ok: false,
+                msg: `Supplier with ID '${supplierId}' does not exist`,
+            });
         }
-        product.stock = stock;
+        product.name = name,
+            product.description = description,
+            product.price = price,
+            product.stock = stock,
+            product.supplier = existingSupplier;
         yield productRepository.save(product);
         return resp.json({
             ok: true,

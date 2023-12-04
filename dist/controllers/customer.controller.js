@@ -13,12 +13,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const data_source_1 = require("./../data-source");
 const Customer_1 = require("../models/Customer");
 const typeorm_1 = require("typeorm");
-const customerRepository = data_source_1.AppDataSource.getRepository(Customer_1.Customer);
+const customerRepository = data_source_1.AppDataSource
+    .getRepository("Customer");
 class CustomerController {
 }
 _a = CustomerController;
 CustomerController.createCustomer = (req, resp) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, lastName, direction } = req.body;
+    const { name, lastName, direction, } = req.body;
     try {
         const customer = new Customer_1.Customer();
         customer.name = name,
@@ -62,6 +63,78 @@ CustomerController.getCustomers = (req, resp) => __awaiter(void 0, void 0, void 
     catch (error) {
         return resp.json({
             ok: false,
+            message: `error = ${error.message}`
+        });
+    }
+});
+CustomerController.byIdCustomer = (req, resp) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = parseInt(req.params.id);
+    try {
+        const customer = yield customerRepository.findOne({
+            where: { id, state: true }
+        });
+        return customer ? resp.json({
+            ok: true, customer
+        })
+            : resp.json({
+                ok: false,
+                msg: "The id don´t exist"
+            });
+    }
+    catch (error) {
+        return resp.json({
+            ok: false,
+            message: `error = ${error.message}`
+        });
+    }
+});
+CustomerController.deleteCustomer = (req, resp) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = parseInt(req.params.id);
+    try {
+        const customer = yield customerRepository.findOne({
+            where: { id, state: true }
+        });
+        if (!customer) {
+            throw new Error("Not found");
+        }
+        customer.state = false;
+        yield customerRepository.save(customer);
+        return resp.json({
+            ok: true,
+            msg: 'Customer was delete'
+        });
+    }
+    catch (error) {
+        return resp.json({
+            ok: false,
+            message: error = `${error.message}`
+        });
+    }
+});
+CustomerController.updateCustomer = (req, resp) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = parseInt(req.params.id);
+    const { name, lastName, direction } = req.body;
+    try {
+        const customer = yield customerRepository.findOne({
+            where: { id, state: true },
+        });
+        if (!name) {
+            throw new Error('Not Found');
+        }
+        customer.name = name,
+            customer.lastName = lastName,
+            customer.direction = direction;
+        yield customerRepository.save(customer);
+        return resp.json({
+            ok: true,
+            STATUS_CODE: 200,
+            message: 'Customer was updated', customer
+        });
+    }
+    catch (error) {
+        return resp.json({
+            ok: false,
+            STATUS_CODE: 500,
             message: `error = ${error.message}`
         });
     }
