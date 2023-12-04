@@ -36,7 +36,7 @@ SaleDetailController.createSaleDetail = (req, res) => __awaiter(void 0, void 0, 
             }
         }
         if (productId) {
-            existingProduct = yield productRepository.findOne({ where: { id: saleId } });
+            existingProduct = yield productRepository.findOne({ where: { id: productId } });
             if (!existingProduct) {
                 return res.json({
                     ok: false,
@@ -69,7 +69,7 @@ SaleDetailController.createSaleDetail = (req, res) => __awaiter(void 0, void 0, 
 SaleDetailController.getSaleDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const saleDetailRepository = data_source_1.AppDataSource.getRepository(SaleDetail_1.SaleDetail);
     try {
-        const saleDetails = yield saleDetailRepository.find({ where: { state: true } });
+        const saleDetails = yield saleDetailRepository.find({ where: { state: true }, relations: { sale: true }, });
         return saleDetails.length > 0 ? res.json({ ok: true, saleDetails }) : res.json({ ok: false, msg: "Not found" });
     }
     catch (error) {

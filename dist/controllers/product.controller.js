@@ -46,9 +46,9 @@ ProductController.createProduct = (req, resp) => __awaiter(void 0, void 0, void 
         const product = new Product_1.Product();
         product.name = name,
             product.description = description,
-            product.price = price,
             product.stock = stock,
             product.supplier = existingSupplier;
+        product.price = price;
         yield productRepository.save(product);
         return resp.json({
             ok: true,
