@@ -5,6 +5,7 @@ import { checkToken } from '../jwtvalidation/jwt.validation'
 const router = Router()
 const product = CustomerController
 
+
 router.post("/",  product.createCustomer)
 router.get("/",  product.getCustomers)
 router.get("/:id",  checkToken, product.byIdCustomer)

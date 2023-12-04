@@ -143,6 +143,7 @@ UsersController.updateUser = (req, res) => __awaiter(void 0, void 0, void 0, fun
         user.name = name;
         user.lastName = lastName;
         user.email = email;
+        user.password = password;
         user.hashPassword();
         const savedUser = yield userRepository.save(user);
         savedUser.password = undefined;
