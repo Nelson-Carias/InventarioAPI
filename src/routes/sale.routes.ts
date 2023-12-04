@@ -5,9 +5,9 @@ const router = Router();
 
 const sale = SaleController
 
-router.post("/", checkToken,  sale.createSale)
+router.post("/",  sale.createSale)
 
-router.get("/",checkToken,  sale.getSales)
+router.get("/",  sale.getSales)
 
 router.get("/:id", checkToken, sale.byIdSale)
 

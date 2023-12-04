@@ -9,7 +9,7 @@ export class Supplier{
     name: string
 
     @Column()
-    contact: number
+    contact: string
 
     @Column()
     direction: string

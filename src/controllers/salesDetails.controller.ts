@@ -27,7 +27,7 @@ class SaleDetailController{
             }
 
             if(productId){
-                existingProduct = await productRepository.findOne({where: {id: saleId}})
+                existingProduct = await productRepository.findOne({where: {id: productId}})
                 if(!existingProduct){
                     return res.json({
                         ok: false,
@@ -63,7 +63,7 @@ class SaleDetailController{
     static getSaleDetails = async (req:Request, res:Response)=>{
         const saleDetailRepository = AppDataSource.getRepository(SaleDetail)
         try{
-            const saleDetails = await saleDetailRepository.find({where:{state:true}})
+            const saleDetails = await saleDetailRepository.find({where:{state:true},relations: { sale: true },})
             return saleDetails.length > 0 ? res.json({ok:true, saleDetails}) : res.json({ok:false, msg:"Not found"})
         }catch(error){
             return res.json({

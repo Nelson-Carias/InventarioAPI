@@ -39,9 +39,10 @@ class ProductController {
 
       product.name = name,
       product.description = description,
-      product.price = price,
+      
       product.stock = stock,
       product.supplier = existingSupplier;
+      product.price = price
 
       await productRepository.save(product);
 
