@@ -147,30 +147,17 @@ class ProductController {
   // FUNCIONA
   static updateProduct = async (req: Request, resp: Response) => {
     const id = parseInt(req.params.id);
-    const {name, description, price, stock, supplierId } = req.body;
-    const supplierRepository = AppDataSource.getRepository(Supplier);
+    const { stock } = req.body;
     try {
       const product = await productRepository.findOne({
         where: { id, state: true },
       });
 
-      const existingSupplier = await supplierRepository.findOne({ where: { id: supplierId } })
-            if (!existingSupplier) {
-                return resp.json({
-                    ok: false,
-                    msg: `Supplier with ID '${supplierId}' does not exist`,
-                })
-            }
+      if (!stock) {
+        throw new Error("Not Found");
+      }
 
-
-
-
-
-      product.name = name,
-      product.description = description,
-      product.price = price,
-      product.stock = stock,
-      product.supplier = existingSupplier;
+      product.stock = stock;
       await productRepository.save(product);
       return resp.json({
         ok: true,
