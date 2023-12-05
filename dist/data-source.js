@@ -6,7 +6,7 @@ exports.AppDataSource = new typeorm_1.DataSource({
     type: "mysql",
     host: "localhost",
     username: "root",
-    password: "passwordsql",
+    password: "password",
     port: 3306,
     database: "test-inventarioapi",
     synchronize: true,
