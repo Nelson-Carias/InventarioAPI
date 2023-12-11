@@ -25,7 +25,7 @@ export class SaleDetail{
     @Column()
     unitPrice: number
 
-    @Column()
+    @Column({default:0})
     subTotal: number
 
     @Column({default:true})

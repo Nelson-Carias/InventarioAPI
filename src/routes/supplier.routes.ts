@@ -6,10 +6,10 @@ import { checkToken } from '../jwtvalidation/jwt.validation'
 const router = Router()
 const supplier = SupplierController
 
-router.post("/", checkToken,  supplier.createSupplier)
-router.get('/', checkToken,  supplier.getSuppliers)
-router.get('/:id',checkToken,  supplier.byIdSupplier)
-router.delete('/:id', checkToken, supplier.deleteSupplier)
-router.put('/:id', checkToken,  supplier.updateSupplier)
+router.post("/",  supplier.createSupplier)
+router.get('/',  supplier.getSuppliers)
+router.get('/:id',  supplier.byIdSupplier)
+router.delete('/:id',  supplier.deleteSupplier)
+router.put('/:id',  supplier.updateSupplier)
 
 export default router
