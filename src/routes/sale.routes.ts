@@ -9,10 +9,10 @@ router.post("/",  sale.createSale)
 
 router.get("/",  sale.getSales)
 
-router.get("/:id", checkToken, sale.byIdSale)
+router.get("/:id",  sale.byIdSale)
 
-router.delete("/:id", checkToken, sale.deleteSale)
+router.delete("/:id",  sale.deleteSale)
 
-router.put("/:id", checkToken, sale.updateSale)
+router.put("/:id",  sale.updateSale)
 
 export default router

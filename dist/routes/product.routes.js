@@ -5,13 +5,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const product_controller_1 = __importDefault(require("../controllers/product.controller"));
-const jwt_validation_1 = require("../jwtvalidation/jwt.validation");
 const router = (0, express_1.Router)();
 const product = product_controller_1.default;
-router.post("/", jwt_validation_1.checkToken, product.createProduct);
-router.get("/", jwt_validation_1.checkToken, product.getProducts);
-router.get("/:id", jwt_validation_1.checkToken, product.byIdProduct);
-router.delete("/:id", jwt_validation_1.checkToken, product.deleteProduct);
-router.put("/:id", jwt_validation_1.checkToken, product.updateProduct);
+router.post("/", product.createProduct);
+router.get("/", product.getProducts);
+router.get("/:id", product.byIdProduct);
+router.delete("/:id", product.deleteProduct);
+router.put("/:id", product.updateProduct);
 exports.default = router;
 //# sourceMappingURL=product.routes.js.map

@@ -22,61 +22,63 @@ SaleDetailController.createSaleDetail = (req, res) => __awaiter(void 0, void 0, 
     const saleDetailRepository = data_source_1.AppDataSource.getRepository(SaleDetail_1.SaleDetail);
     const saleRepository = data_source_1.AppDataSource.getRepository(Sale_1.Sale);
     const productRepository = data_source_1.AppDataSource.getRepository(Product_1.Product);
-    let existingSale;
-    let existingProduct;
     try {
-        if (saleId) {
-            existingSale = yield saleRepository.findOne({ where: { id: saleId } });
-            if (!existingSale) {
-                return res.json({
-                    ok: false,
-                    StatusCode: 404,
-                    message: `Sale with ID  ${saleId} does not exist`
-                });
-            }
+        const sale = yield saleRepository.findOne({ where: { id: saleId } });
+        if (!sale) {
+            return res.json({
+                ok: false,
+                StatusCode: 404,
+                message: `Sale with ID  ${saleId} does not exist`,
+            });
         }
-        if (productId) {
-            existingProduct = yield productRepository.findOne({ where: { id: productId } });
-            if (!existingProduct) {
-                return res.json({
-                    ok: false,
-                    StatusCode: 404,
-                    message: `Product with ID ${productId} does not exist`
-                });
-            }
+        const product = yield productRepository.findOne({
+            where: { id: productId },
+        });
+        if (!product) {
+            return res.json({
+                ok: false,
+                StatusCode: 404,
+                message: `Product with ID ${productId} does not exist`,
+            });
         }
         const saleDetail = new SaleDetail_1.SaleDetail();
         saleDetail.amount = amount;
         saleDetail.unitPrice = unitPrice;
         saleDetail.subTotal = amount * unitPrice;
-        saleDetail.sale = existingSale;
-        saleDetail.product = existingProduct;
+        saleDetail.sale = sale;
+        saleDetail.product = product;
+        console.log(saleDetail);
         yield saleDetailRepository.save(saleDetail);
         return res.json({
             ok: true,
             StatusCode: 200,
-            message: `SaleDetail was create with successfully`
+            message: `SaleDetail was create with successfully`,
         });
     }
     catch (error) {
         return res.json({
             ok: false,
             StatusCode: 500,
-            message: `error = ${error.message}`
+            message: `error = ${error.message}`,
         });
     }
 });
 SaleDetailController.getSaleDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const saleDetailRepository = data_source_1.AppDataSource.getRepository(SaleDetail_1.SaleDetail);
     try {
-        const saleDetails = yield saleDetailRepository.find({ where: { state: true }, relations: { sale: true }, });
-        return saleDetails.length > 0 ? res.json({ ok: true, saleDetails }) : res.json({ ok: false, msg: "Not found" });
+        const saleDetails = yield saleDetailRepository.find({
+            where: { state: true },
+            relations: { sale: true, product: true },
+        });
+        saleDetails.length > 0
+            ? res.json({ ok: true, saleDetails })
+            : res.json({ ok: false, msg: "Not found" });
     }
     catch (error) {
         return res.json({
             ok: false,
             StatusCode: 500,
-            message: `error = ${error.message}`
+            message: `error = ${error.message}`,
         });
     }
 });
@@ -84,15 +86,18 @@ SaleDetailController.byIdSaleDetail = (req, res) => __awaiter(void 0, void 0, vo
     const saleDetailRepository = data_source_1.AppDataSource.getRepository(SaleDetail_1.SaleDetail);
     const id = parseInt(req.params.id);
     try {
-        const saleDetail = yield saleDetailRepository.findOne({ where: { id, state: true } });
-        return saleDetail ?
-            res.json({ ok: true, saleDetail }) : res.json({ ok: false, msg: "Not found" });
+        const saleDetail = yield saleDetailRepository.findOne({
+            where: { id, state: true },
+        });
+        return saleDetail
+            ? res.json({ ok: true, saleDetail })
+            : res.json({ ok: false, msg: "Not found" });
     }
     catch (error) {
         return res.json({
             ok: false,
             StatusCode: 500,
-            message: `error = ${error.message}`
+            message: `error = ${error.message}`,
         });
     }
 });
@@ -100,12 +105,14 @@ SaleDetailController.deleteSaleDetail = (req, res) => __awaiter(void 0, void 0, 
     const saleDetailRepository = data_source_1.AppDataSource.getRepository(SaleDetail_1.SaleDetail);
     const id = parseInt(req.params.id);
     try {
-        const saleDetail = yield saleDetailRepository.findOne({ where: { id, state: true } });
+        const saleDetail = yield saleDetailRepository.findOne({
+            where: { id, state: true },
+        });
         if (!saleDetail) {
             return res.json({
                 ok: false,
                 StatusCode: 404,
-                message: `Not found`
+                message: `Not found`,
             });
         }
         saleDetail.state = false;
@@ -113,42 +120,45 @@ SaleDetailController.deleteSaleDetail = (req, res) => __awaiter(void 0, void 0, 
         return res.json({
             ok: true,
             StatusCode: 200,
-            message: `SaleDetail was delete`
+            message: `SaleDetail was delete`,
         });
     }
     catch (error) {
         return res.json({
             ok: false,
             StatusCode: 500,
-            message: `error = ${error.message}`
+            message: `error = ${error.message}`,
         });
     }
 });
 SaleDetailController.updateSaleDetail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const saleDetailRepository = data_source_1.AppDataSource.getRepository(SaleDetail_1.SaleDetail);
     const id = parseInt(req.params.id);
-    const { amount, unitPrice, subTotal } = req.body;
+    const { amount, unitPrice, subTotal, productId, saleId } = req.body;
     try {
         const saleDetail = yield saleDetailRepository.findOne({
             where: { id, state: true },
         });
         if (!saleDetail) {
-            throw new Error('Not found');
+            throw new Error("Not found");
         }
         saleDetail.amount = amount;
         saleDetail.unitPrice = unitPrice;
         saleDetail.subTotal = amount * unitPrice;
+        saleDetail.sale = saleId;
+        saleDetail.product = productId;
         yield saleDetailRepository.save(saleDetail);
         return res.json({
             ok: true,
             StatusCode: 200,
-            message: `saleDetail was update`, saleDetail
+            message: `saleDetail was update`,
+            saleDetail,
         });
     }
     catch (error) {
         return res.json({
             ok: false,
-            StatusCode: `error = ${error.message}`
+            StatusCode: `error = ${error.message}`,
         });
     }
 });
