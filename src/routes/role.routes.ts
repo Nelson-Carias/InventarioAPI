@@ -5,15 +5,15 @@ const router = Router();
 
 const rol =  RolController
 
-router.post("/",   rol.createRol)
+router.post("/", checkToken,  rol.createRol)
 
-router.get("/",  rol.getRoles)
+router.get("/", checkToken, rol.getRoles)
 
-router.get("/:id", rol.byIdRol)
+router.get("/:id",checkToken, rol.byIdRol)
 
-router.put("/:id",   rol.updateRol)
+router.put("/:id",  checkToken, rol.updateRol)
 
-router.delete("/:id",   rol.deleteRol)
+router.delete("/:id",checkToken,   rol.deleteRol)
 
 
 export default router

@@ -6,14 +6,14 @@ const router = Router();
 
 const user = UsersController
 
-router.post("/", checkToken, user.createUser)
+router.post("/",  user.createUser)
 
-router.get("/", checkToken, user.getUsers)
+router.get("/",  user.getUsers)
 
-router.get("/:id", checkToken, user.byIdUser)
+router.get("/:id", user.byIdUser)
 
-router.delete("/:id", checkToken, user.deleteUser)
+router.delete("/:id",  user.deleteUser)
 
-router.put("/:id", checkToken, user.updateUser)
+router.put("/:id",  user.updateUser)
 
 export default router

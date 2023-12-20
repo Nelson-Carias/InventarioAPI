@@ -6,10 +6,10 @@ const router = Router()
 const product = CustomerController
 
 
-router.post("/",  product.createCustomer)
-router.get("/",  product.getCustomers)
-router.get("/:id", product.byIdCustomer)
-router.delete("/:id",   product.deleteCustomer)
-router.put("/:id",  product.updateCustomer)
+router.post("/",  checkToken,  product.createCustomer)
+router.get("/",   checkToken, product.getCustomers)
+router.get("/:id", checkToken,  product.byIdCustomer)
+router.delete("/:id", checkToken,    product.deleteCustomer)
+router.put("/:id",  checkToken,  product.updateCustomer)
 
 export default router

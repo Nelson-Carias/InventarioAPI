@@ -5,14 +5,14 @@ const router =  Router();
 
 const saleDetail = SaleDetailController
 
-router.post("/",   saleDetail.createSaleDetail)
+router.post("/",  checkToken,   saleDetail.createSaleDetail)
 
-router.get("/",  saleDetail.getSaleDetails)
+router.get("/",  checkToken,  saleDetail.getSaleDetails)
 
-router.get("/:id",  saleDetail.byIdSaleDetail)
+router.get("/:id",  checkToken,   saleDetail.byIdSaleDetail)
 
-router.delete("/:id",  saleDetail.deleteSaleDetail)
+router.delete("/:id",   checkToken,  saleDetail.deleteSaleDetail)
 
-router.put("/:id",  saleDetail.updateSaleDetail)
+router.put("/:id",  checkToken,   saleDetail.updateSaleDetail)
 
 export default router
