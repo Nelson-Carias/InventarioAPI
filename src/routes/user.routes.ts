@@ -1,18 +1,19 @@
 import { Router } from "express";
 import UsersController from "../controllers/users.controller";
+import { checkToken } from "../jwtvalidation/jwt.validation";
 
 const router = Router();
 
 const user = UsersController
 
-router.post("/", user.createUser)
+router.post("/", checkToken, user.createUser)
 
-router.get("/", user.getUsers)
+router.get("/", checkToken, user.getUsers)
 
-router.get("/:id", user.byIdUser)
+router.get("/:id", checkToken, user.byIdUser)
 
-router.delete("/:id", user.deleteUser)
+router.delete("/:id", checkToken, user.deleteUser)
 
-router.put("/:id", user.updateUser)
+router.put("/:id", checkToken, user.updateUser)
 
 export default router
