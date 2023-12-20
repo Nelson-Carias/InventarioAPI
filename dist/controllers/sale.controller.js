@@ -34,14 +34,6 @@ SaleController.createSale = (req, res) => __awaiter(void 0, void 0, void 0, func
                 });
             }
         }
-        // else{
-        //     if(existingUser?.user && userId){
-        //         return res.json({
-        //             ok:false,
-        //             msg: 'Cannot assing supplier to a regular sale'
-        //         })
-        //     }
-        // }
         const sale = new Sale_1.Sale();
         sale.total = total;
         sale.customer = existingCustomer;

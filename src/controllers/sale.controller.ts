@@ -24,15 +24,7 @@ class SaleController {
           });
         }
       }
-      // else{
-      //     if(existingUser?.user && userId){
-      //         return res.json({
-      //             ok:false,
-      //             msg: 'Cannot assing supplier to a regular sale'
-      //         })
-      //     }
-      // }
-
+     
       const sale = new Sale();
 
       sale.total = total;
