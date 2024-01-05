@@ -72,7 +72,8 @@ UsersController.getUsers = (req, res) => __awaiter(void 0, void 0, void 0, funct
     const userRepository = data_source_1.AppDataSource.getRepository(User_1.User);
     try {
         const users = yield userRepository.find({
-            where: { state: true }, relations: { rol: true },
+            where: { state: true },
+            relations: { rol: true },
         });
         return users.length > 0
             ? res.json({
