@@ -36,13 +36,33 @@ class RoleController {
         console.log(req.query)
         try{
 
-            const skip = (page - 1) * limit;
-            const roles = await roleRepository.find({
-                where: { state: true, rol: Like(`%${name}%`) },
-                skip,
-                take: limit,
+ 
+
+    const [roles, total] = await roleRepository.findAndCount({
+        where: { state: true, rol: Like(`%${name}%`)},
+        order: { rol: 'ASC' },
+        skip: (page - 1) * limit,
+        take: limit,
       });
-            return roles.length > 0 ? res.json({ok:true, roles, page, limit, totalRoles: roles.length }) : res.json({ok:false, msg: "Not found"})
+
+      if (roles.length > 0) {
+        let totalPag: number = Number(total) / limit;
+        if (totalPag % 1 !== 0) {
+          totalPag = Math.trunc(totalPag) + 1;
+        }
+        let nextPag: number = page >= totalPag ? page : Number(page) + 1;
+        let prevPag: number = page <= 1 ? page : page - 1;
+        return res.json({
+          ok: true,
+          roles,
+          total,
+          totalPag,
+          currentPag: Number(page),
+          nextPag,
+          prevPag,
+        });
+      }
+           
         }
         catch(error){
             ok: false

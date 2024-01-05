@@ -43,13 +43,29 @@ RoleController.getRoles = (req, res) => __awaiter(void 0, void 0, void 0, functi
     const limit = parseInt(req.query.limit) || 10;
     console.log(req.query);
     try {
-        const skip = (page - 1) * limit;
-        const roles = yield roleRepository.find({
+        const [roles, total] = yield roleRepository.findAndCount({
             where: { state: true, rol: (0, typeorm_1.Like)(`%${name}%`) },
-            skip,
+            order: { rol: 'ASC' },
+            skip: (page - 1) * limit,
             take: limit,
         });
-        return roles.length > 0 ? res.json({ ok: true, roles, page, limit, totalRoles: roles.length }) : res.json({ ok: false, msg: "Not found" });
+        if (roles.length > 0) {
+            let totalPag = Number(total) / limit;
+            if (totalPag % 1 !== 0) {
+                totalPag = Math.trunc(totalPag) + 1;
+            }
+            let nextPag = page >= totalPag ? page : Number(page) + 1;
+            let prevPag = page <= 1 ? page : page - 1;
+            return res.json({
+                ok: true,
+                roles,
+                total,
+                totalPag,
+                currentPag: Number(page),
+                nextPag,
+                prevPag,
+            });
+        }
     }
     catch (error) {
         ok: false;
