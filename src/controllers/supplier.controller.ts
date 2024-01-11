@@ -36,29 +36,44 @@ class SupplierController{
 
     static getSuppliers = async (req:Request, resp:Response)=>{
         const name = req.query.name || ""
+        const page = parseInt(req.query.page as string) || 1
+        const limit = parseInt(req.query.limit as string) || 10
         console.log(req.query);
-        try {
-            const supplier = await supplierRepository.find({ 
-                where: {
-                    state:true,
-                    name: Like(`%${name}%`)
-                },
-            })
-            return supplier.length>0 
-                ?resp.json({
-                    ok:true, 
-                    supplier
-                }) 
-                : resp.json({
-                    ok:false, 
-                    msg:'Not found'
-                })
-        } catch (error) {
+
+        try{
+        const [supplier, total] = await supplierRepository.findAndCount({
+            where: { state: true, name: Like(`%${name}%`)},
+            order: { name: 'ASC' },
+            skip: (page - 1) * limit,
+            take: limit,
+          });
+    
+          if (supplier.length > 0) {
+            let totalPag: number = Number(total) / limit;
+            if (totalPag % 1 !== 0) {
+              totalPag = Math.trunc(totalPag) + 1;
+            }
+            let nextPag: number = page >= totalPag ? page : Number(page) + 1;
+            let prevPag: number = page <= 1 ? page : page - 1;
             return resp.json({
-                ok: false, 
+              ok: true,
+              supplier,
+              total,
+              totalPag,
+              currentPag: Number(page),
+              nextPag,
+              prevPag,
+            });
+          }
+               
+            }
+            catch(error){
+                ok: false
+                StatusCode: 500
                 message: `error = ${error.message}`
-            })
-        }
+            }
+
+       
     }
 
     static byIdSupplier = async (req:Request, resp:Response)=>{

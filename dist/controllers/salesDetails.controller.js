@@ -67,8 +67,7 @@ SaleDetailController.getSaleDetails = (req, res) => __awaiter(void 0, void 0, vo
     const saleDetailRepository = data_source_1.AppDataSource.getRepository(SaleDetail_1.SaleDetail);
     try {
         const saleDetails = yield saleDetailRepository.find({
-            where: { state: true },
-            relations: { sale: true, product: true },
+            where: { state: true }, relations: { sale: true, product: true },
         });
         saleDetails.length > 0
             ? res.json({ ok: true, saleDetails })

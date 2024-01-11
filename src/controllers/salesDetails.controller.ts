@@ -61,8 +61,7 @@ class SaleDetailController {
     const saleDetailRepository = AppDataSource.getRepository(SaleDetail);
     try {
       const saleDetails = await saleDetailRepository.find({
-        where: { state: true },
-        relations: { sale: true, product: true },
+        where:{      state: true },   relations: { sale: true, product: true },
       });
        saleDetails.length > 0
         ? res.json({ ok: true, saleDetails })

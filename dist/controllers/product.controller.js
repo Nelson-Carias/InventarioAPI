@@ -50,6 +50,7 @@ ProductController.createProduct = (req, resp) => __awaiter(void 0, void 0, void 
             product.supplier = existingSupplier;
         product.price = price;
         yield productRepository.save(product);
+        console.log(product);
         return resp.json({
             ok: true,
             STATUS_CODE: 200,
@@ -67,32 +68,74 @@ ProductController.createProduct = (req, resp) => __awaiter(void 0, void 0, void 
 //FUNCIONA
 ProductController.getProducts = (req, resp) => __awaiter(void 0, void 0, void 0, function* () {
     const name = req.query.name || "";
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    console.log(req.query);
     const supplier = req.query.supplier || "";
     console.log(req.query);
+    // try{
+    //     const [product, total] = await productRepository.findAndCount({
+    //       where: {
+    //          state: true, name: Like(`%${name}%`), supplier:Like(`%${supplier}%`)}, relations: { supplier: true },
+    //       order: { name: 'ASC' },
+    //       skip: (page - 1) * limit,
+    //       take: limit,
+    //     });
+    //     if (product.length > 0) {
+    //       let totalPag: number = Number(total) / limit;
+    //       if (totalPag % 1 !== 0) {
+    //         totalPag = Math.trunc(totalPag) + 1;
+    //       }
+    //       let nextPag: number = page >= totalPag ? page : Number(page) + 1;
+    //       let prevPag: number = page <= 1 ? page : page - 1;
+    //       return resp.json({
+    //         ok: true,
+    //         product,
+    //         total,
+    //         totalPag,
+    //         currentPag: Number(page),
+    //         nextPag,
+    //         prevPag,
+    //       });
+    //     }
+    //       }
+    //       catch(error){
+    //           ok: false
+    //           StatusCode: 500
+    //           message: `error = ${error.message}`
+    //       }
+    const productRepository = data_source_1.AppDataSource.getRepository(Product_1.Product);
     try {
-        const products = yield productRepository.find({
+        const [product, total] = yield productRepository.findAndCount({
             where: {
-                state: true,
-                name: (0, typeorm_1.Like)(`%${name}%`),
-                supplier: { name: (0, typeorm_1.Like)(`%${supplier}%`) }
-            },
-            relations: { supplier: true },
+                state: true, name: (0, typeorm_1.Like)(`%${name}%`)
+            }, relations: { supplier: true },
+            order: { name: 'ASC' },
+            skip: (page - 1) * limit,
+            take: limit,
         });
-        return products.length > 0
-            ? resp.json({
+        if (product.length > 0) {
+            let totalPag = Number(total) / limit;
+            if (totalPag % 1 !== 0) {
+                totalPag = Math.trunc(totalPag) + 1;
+            }
+            let nextPag = page >= totalPag ? page : Number(page) + 1;
+            let prevPag = page <= 1 ? page : page - 1;
+            return resp.json({
                 ok: true,
-                STATUS_CODE: 200,
-                message: "list of products",
-                products,
-            })
-            : resp.json({ ok: false, message: "Not found", products });
+                product,
+                total,
+                totalPag,
+                currentPag: Number(page),
+                nextPag,
+                prevPag,
+            });
+        }
     }
     catch (error) {
-        return resp.json({
-            ok: false,
-            STATUS_CODE: 500,
-            message: `error = ${error.message}`,
-        });
+        ok: false;
+        StatusCode: 500;
+        message: `error = ${error.message}`;
     }
 });
 //FUNCIONA
@@ -172,6 +215,7 @@ ProductController.updateProduct = (req, resp) => __awaiter(void 0, void 0, void 
             product.stock = stock,
             product.supplier = existingSupplier;
         product.price = price;
+        console.log(product);
         yield productRepository.save(product);
         return resp.json({
             ok: true,

@@ -1,3 +1,4 @@
+import { Rol } from './../models/Rol';
 
 import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
@@ -45,11 +46,13 @@ class ProductController {
       product.price = price
 
       await productRepository.save(product);
+      console.log(product)
 
       return resp.json({
         ok: true,
         STATUS_CODE: 200,
         message: "Product was create with successfully",
+       
       });
     } catch (error) {
       return resp.json({
@@ -63,34 +66,82 @@ class ProductController {
   //FUNCIONA
   static getProducts = async (req: Request, resp: Response) => {
     const name = req.query.name || ""
-    const supplier = req.query.supplier || ""
-
+     const page = parseInt(req.query.page as string) || 1
+     const limit = parseInt(req.query.limit as string) || 10
     console.log(req.query);
-    try {
-      const products = await productRepository.find({
-        where: { 
-            state: true,             
-            name: Like(`%${name}%`),
-            supplier: { name: Like(`%${supplier}%`) } 
-        },
-        relations: { supplier: true },
-      });
-      return products.length > 0
-        ? resp.json({
-            ok: true,
-            STATUS_CODE: 200,
-            message: "list of products",
-            products,
-          })
-        : resp.json({ ok: false, message: "Not found", products });
-    } catch (error) {
-      return resp.json({
-        ok: false,
-        STATUS_CODE: 500,
-        message: `error = ${error.message}`,
+     const supplier = req.query.supplier || ""
 
-      });
-    }
+     console.log(req.query);
+// try{
+//     const [product, total] = await productRepository.findAndCount({
+//       where: {
+//          state: true, name: Like(`%${name}%`), supplier:Like(`%${supplier}%`)}, relations: { supplier: true },
+//       order: { name: 'ASC' },
+//       skip: (page - 1) * limit,
+//       take: limit,
+//     });
+
+//     if (product.length > 0) {
+//       let totalPag: number = Number(total) / limit;
+//       if (totalPag % 1 !== 0) {
+//         totalPag = Math.trunc(totalPag) + 1;
+//       }
+//       let nextPag: number = page >= totalPag ? page : Number(page) + 1;
+//       let prevPag: number = page <= 1 ? page : page - 1;
+//       return resp.json({
+//         ok: true,
+//         product,
+//         total,
+//         totalPag,
+//         currentPag: Number(page),
+//         nextPag,
+//         prevPag,
+//       });
+//     }
+         
+//       }
+//       catch(error){
+//           ok: false
+//           StatusCode: 500
+//           message: `error = ${error.message}`
+//       }
+    
+const productRepository = AppDataSource.getRepository(Product);
+try {
+  const [product, total] = await productRepository.findAndCount({
+          where: {
+             state: true, name: Like(`%${name}%`)}, relations: { supplier: true },
+          order: { name: 'ASC' },
+          skip: (page - 1) * limit,
+          take: limit,
+        });
+        if (product.length > 0) {
+          
+                let totalPag: number = Number(total) / limit;
+                if (totalPag % 1 !== 0) {
+                  totalPag = Math.trunc(totalPag) + 1;
+                }
+                
+                let nextPag: number = page >= totalPag ? page : Number(page) + 1;
+                let prevPag: number = page <= 1 ? page : page - 1;
+                return resp.json({
+                  ok: true,
+                  product,
+                  total,
+                  totalPag,
+                  currentPag: Number(page),
+                  nextPag,
+                  prevPag,
+                });
+              }
+                   
+                }
+                catch(error){
+                    ok: false
+                    StatusCode: 500
+                    message: `error = ${error.message}`
+                }
+              
   };
 
   //FUNCIONA
@@ -173,7 +224,9 @@ class ProductController {
       product.stock = stock,
       product.supplier = existingSupplier;
       product.price = price
+      console.log(product)
       await productRepository.save(product);
+      
       return resp.json({
         ok: true,
         STATUS_CODE: 200,

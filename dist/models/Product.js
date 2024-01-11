@@ -20,10 +20,6 @@ __decorate([
     __metadata("design:type", Number)
 ], Product.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.RelationId)((product) => product.supplier),
-    __metadata("design:type", Number)
-], Product.prototype, "supplierId", void 0);
-__decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], Product.prototype, "name", void 0);
@@ -34,19 +30,23 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", Number)
-], Product.prototype, "price", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", Number)
 ], Product.prototype, "stock", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ default: true }),
-    __metadata("design:type", Boolean)
-], Product.prototype, "state", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => Supplier_1.Supplier),
     __metadata("design:type", Supplier_1.Supplier)
 ], Product.prototype, "supplier", void 0);
+__decorate([
+    (0, typeorm_1.RelationId)((product) => product.supplier),
+    __metadata("design:type", Number)
+], Product.prototype, "supplierId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: "double precision" }),
+    __metadata("design:type", Number)
+], Product.prototype, "price", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: true }),
+    __metadata("design:type", Boolean)
+], Product.prototype, "state", void 0);
 exports.Product = Product = __decorate([
     (0, typeorm_1.Entity)()
 ], Product);
