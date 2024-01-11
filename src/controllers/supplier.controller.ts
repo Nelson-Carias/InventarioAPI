@@ -48,7 +48,7 @@ class SupplierController{
             take: limit,
           });
     
-          if (supplier.length > 0) {
+         
             let totalPag: number = Number(total) / limit;
             if (totalPag % 1 !== 0) {
               totalPag = Math.trunc(totalPag) + 1;
@@ -64,14 +64,14 @@ class SupplierController{
               nextPag,
               prevPag,
             });
-          }
+          } catch(error){
+            ok: false
+            StatusCode: 500
+            message: `error = ${error.message}`
+        }
                
-            }
-            catch(error){
-                ok: false
-                StatusCode: 500
-                message: `error = ${error.message}`
-            }
+            
+           
 
        
     }

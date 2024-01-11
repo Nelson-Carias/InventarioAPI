@@ -52,23 +52,21 @@ SupplierController.getSuppliers = (req, resp) => __awaiter(void 0, void 0, void 
             skip: (page - 1) * limit,
             take: limit,
         });
-        if (supplier.length > 0) {
-            let totalPag = Number(total) / limit;
-            if (totalPag % 1 !== 0) {
-                totalPag = Math.trunc(totalPag) + 1;
-            }
-            let nextPag = page >= totalPag ? page : Number(page) + 1;
-            let prevPag = page <= 1 ? page : page - 1;
-            return resp.json({
-                ok: true,
-                supplier,
-                total,
-                totalPag,
-                currentPag: Number(page),
-                nextPag,
-                prevPag,
-            });
+        let totalPag = Number(total) / limit;
+        if (totalPag % 1 !== 0) {
+            totalPag = Math.trunc(totalPag) + 1;
         }
+        let nextPag = page >= totalPag ? page : Number(page) + 1;
+        let prevPag = page <= 1 ? page : page - 1;
+        return resp.json({
+            ok: true,
+            supplier,
+            total,
+            totalPag,
+            currentPag: Number(page),
+            nextPag,
+            prevPag,
+        });
     }
     catch (error) {
         ok: false;

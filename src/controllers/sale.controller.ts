@@ -1,9 +1,10 @@
+import { Customer } from './../models/Customer';
 import { error } from "console";
 import { Sale } from "./../models/Sale";
 import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { json } from "stream/consumers";
-import { Customer } from "../models/Customer";
+import { Like } from 'typeorm';
 
 class SaleController {
   //Save Sale
@@ -48,21 +49,37 @@ class SaleController {
 
   static getSales = async (req: Request, res: Response) => {
     const saleRepository = AppDataSource.getRepository(Sale);
-    try {
-      const sales = await saleRepository.find({
-        where: { state: true },
-        relations: { customer: true },
-      });
-      return sales.length > 0
-        ? res.json({ ok: true, sales })
-        : res.json({ ok: false, msg: "Not found" });
-    } catch (error) {
-      return res.json({
-        ok: false,
-        StatusCode: 500,
-        message: `error = ${error.message}`,
-      });
-    }
+    const customer = req.query.customer || ""
+    const page = parseInt(req.query.page as string) || 1
+    const limit = parseInt(req.query.limit as string) || 10
+    console.log(req.query);
+    try{
+    const [sales, total] = await saleRepository.findAndCount({
+        where: { state: true, customer:{name: Like(`%${customer}%`)}},
+        order: { customer: 'ASC' },
+        skip: (page - 1) * limit,
+        take: limit,
+      });       
+        let totalPag: number = Number(total) / limit;
+        if (totalPag % 1 !== 0) {
+          totalPag = Math.trunc(totalPag) + 1;
+        }
+        let nextPag: number = page >= totalPag ? page : Number(page) + 1;
+        let prevPag: number = page <= 1 ? page : page - 1;
+        return res.json({
+          ok: true,
+          sales,
+          total,
+          totalPag,
+          currentPag: Number(page),
+          nextPag,
+          prevPag,
+        });   
+        }    catch(error){
+            ok: false
+            StatusCode: 500
+            message: `error = ${error.message}`
+        }
   };
 
   static byIdSale = async (req: Request, res: Response) => {

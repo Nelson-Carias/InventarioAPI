@@ -35,9 +35,6 @@ class RoleController {
         
         console.log(req.query)
         try{
-
- 
-
     const [roles, total] = await roleRepository.findAndCount({
         where: { state: true, rol: Like(`%${name}%`)},
         order: { rol: 'ASC' },
@@ -45,7 +42,7 @@ class RoleController {
         take: limit,
       });
 
-      if (roles.length > 0) {
+      
         let totalPag: number = Number(total) / limit;
         if (totalPag % 1 !== 0) {
           totalPag = Math.trunc(totalPag) + 1;
@@ -63,7 +60,7 @@ class RoleController {
         });
       }
            
-        }
+        
         catch(error){
             ok: false
             StatusCode: 500

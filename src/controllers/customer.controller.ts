@@ -35,29 +35,60 @@ class CustomerController{
 
     static getCustomers = async (req:Request, resp:Response)=>{
         const name = req.query.name || ""
+        const page = parseInt(req.query.page as string) || 1
+        const limit = parseInt(req.query.limit as string) || 10
         console.log(req.query);
-        try {
-            const customer = await customerRepository.find({ 
-                where: {
-                    state:true,
-                    name: Like(`%${name}%`)
-                },
-            })
-            return customer.length>0 
-                ?resp.json({
-                    ok:true, 
-                    customer
-                }) 
-                : resp.json({
-                    ok:false, 
-                    message:'Not found'
-                })
-        } catch (error) {
+        try{
+        const [customer, total] = await customerRepository.findAndCount({
+            where: { state: true, name: Like(`%${name}%`)},
+            order: { name: 'ASC' },
+            skip: (page - 1) * limit,
+            take: limit,
+          });       
+            let totalPag: number = Number(total) / limit;
+            if (totalPag % 1 !== 0) {
+              totalPag = Math.trunc(totalPag) + 1;
+            }
+            let nextPag: number = page >= totalPag ? page : Number(page) + 1;
+            let prevPag: number = page <= 1 ? page : page - 1;
             return resp.json({
-                ok: false, 
+              ok: true,
+              customer,
+              total,
+              totalPag,
+              currentPag: Number(page),
+              nextPag,
+              prevPag,
+            });   
+            }    catch(error){
+                ok: false
+                StatusCode: 500
                 message: `error = ${error.message}`
-            })
-        }
+            }
+        // const name = req.query.name || ""
+        // console.log(req.query);
+        // try {
+        //     const customer = await customerRepository.find({ 
+        //         where: {
+        //             state:true,
+        //             name: Like(`%${name}%`)
+        //         },
+        //     })
+        //     return customer.length>0 
+        //         ?resp.json({
+        //             ok:true, 
+        //             customer
+        //         }) 
+        //         : resp.json({
+        //             ok:false, 
+        //             message:'Not found'
+        //         })
+        // } catch (error) {
+        //     return resp.json({
+        //         ok: false, 
+        //         message: `error = ${error.message}`
+        //     })
+        // }
     }
 
     static byIdCustomer = async (req:Request, resp:Response)=>{

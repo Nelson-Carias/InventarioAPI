@@ -42,30 +42,61 @@ CustomerController.createCustomer = (req, resp) => __awaiter(void 0, void 0, voi
 });
 CustomerController.getCustomers = (req, resp) => __awaiter(void 0, void 0, void 0, function* () {
     const name = req.query.name || "";
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
     console.log(req.query);
     try {
-        const customer = yield customerRepository.find({
-            where: {
-                state: true,
-                name: (0, typeorm_1.Like)(`%${name}%`)
-            },
+        const [customer, total] = yield customerRepository.findAndCount({
+            where: { state: true, name: (0, typeorm_1.Like)(`%${name}%`) },
+            order: { name: 'ASC' },
+            skip: (page - 1) * limit,
+            take: limit,
         });
-        return customer.length > 0
-            ? resp.json({
-                ok: true,
-                customer
-            })
-            : resp.json({
-                ok: false,
-                message: 'Not found'
-            });
+        let totalPag = Number(total) / limit;
+        if (totalPag % 1 !== 0) {
+            totalPag = Math.trunc(totalPag) + 1;
+        }
+        let nextPag = page >= totalPag ? page : Number(page) + 1;
+        let prevPag = page <= 1 ? page : page - 1;
+        return resp.json({
+            ok: true,
+            customer,
+            total,
+            totalPag,
+            currentPag: Number(page),
+            nextPag,
+            prevPag,
+        });
     }
     catch (error) {
-        return resp.json({
-            ok: false,
-            message: `error = ${error.message}`
-        });
+        ok: false;
+        StatusCode: 500;
+        message: `error = ${error.message}`;
     }
+    // const name = req.query.name || ""
+    // console.log(req.query);
+    // try {
+    //     const customer = await customerRepository.find({ 
+    //         where: {
+    //             state:true,
+    //             name: Like(`%${name}%`)
+    //         },
+    //     })
+    //     return customer.length>0 
+    //         ?resp.json({
+    //             ok:true, 
+    //             customer
+    //         }) 
+    //         : resp.json({
+    //             ok:false, 
+    //             message:'Not found'
+    //         })
+    // } catch (error) {
+    //     return resp.json({
+    //         ok: false, 
+    //         message: `error = ${error.message}`
+    //     })
+    // }
 });
 CustomerController.byIdCustomer = (req, resp) => __awaiter(void 0, void 0, void 0, function* () {
     const id = parseInt(req.params.id);
